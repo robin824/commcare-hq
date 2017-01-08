@@ -1,7 +1,7 @@
 from itertools import izip_longest
 
 from django.conf import settings
-from django.core.management.base import CommandError, LabelCommand
+from django.core.management.base import BaseCommand, CommandError
 from sqlalchemy.exc import OperationalError
 
 from corehq.apps.couch_sql_migration.couchsqlmigration import (
@@ -19,7 +19,7 @@ from couchforms.dbaccessors import get_form_ids_by_type
 from couchforms.models import doc_types, XFormInstance
 
 
-class Command(LabelCommand):
+class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('domain')
@@ -38,7 +38,7 @@ class Command(LabelCommand):
         assert all(not value for key, value in options.items()
                    if key in this_command_opts and key != sole_option)
 
-    def handle_label(self, domain, **options):
+    def handle(self, domain, **options):
         if should_use_sql_backend(domain):
             raise CommandError(u'It looks like {} has already been migrated.'.format(domain))
 
