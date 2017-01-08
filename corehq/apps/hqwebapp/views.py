@@ -94,11 +94,14 @@ def server_error(request, template_name='500.html'):
     cache.cache.set(traceback_key, traceback_text, 60*60)
 
     return HttpResponseServerError(t.render(RequestContext(request,
-        {'MEDIA_URL': settings.MEDIA_URL,
-         'STATIC_URL': settings.STATIC_URL,
-         'domain': domain,
-         '500traceback': traceback_key,
-        })))
+        {
+            'MEDIA_URL': settings.MEDIA_URL,
+            'STATIC_URL': settings.STATIC_URL,
+            'domain': domain,
+            '500traceback': traceback_key,
+            'request': request,
+        }
+    )))
 
 
 def not_found(request, template_name='404.html'):
