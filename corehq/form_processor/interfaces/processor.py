@@ -107,7 +107,14 @@ class FormProcessorInterface(object):
         Check if there is already a form with the given ID. If domain is specified only check for
         duplicates within that domain.
         """
-        return self.processor.is_duplicate(xform_id, domain=domain)
+        if domain:
+            return self.processor.is_duplicate(xform_id, domain=domain)
+        else:
+            from corehq.form_processor.backends.sql.processor import FormProcessorSQL
+            from corehq.form_processor.backends.couch.processor import FormProcessorCouch
+
+            # check across Couch & SQL to ensure globabl uniqueness
+            return FormProcessorSQL.is_duplicate(xform_id, domain=domain) or FormProcessorCouch.is_duplicate(xform_id)
 
     def new_xform(self, form_json):
         return self.processor.new_xform(form_json)
